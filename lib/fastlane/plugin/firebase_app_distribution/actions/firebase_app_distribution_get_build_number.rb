@@ -11,7 +11,7 @@ module Fastlane
       FIREBASE_APP_DISTRO_BUILD_VERSION_COUNT ||= :FIREBASE_APP_DISTRO_BUILD_VERSION_COUNT
     end
 
-    class FirebaseAppDistributionGetLatestReleaseAction < Action
+    class FirebaseAppDistributionGetBuildNumberAction < Action
       extend Auth::FirebaseAppDistributionAuthClient
       extend Helper::FirebaseAppDistributionHelper
 
