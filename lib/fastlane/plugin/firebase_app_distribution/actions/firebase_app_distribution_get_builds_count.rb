@@ -8,10 +8,10 @@ require_relative '../helper/firebase_app_distribution_helper'
 module Fastlane
   module Actions
     module SharedValues
-      FIREBASE_APP_DISTRO_BUILD_VERSION_COUNT ||= :FIREBASE_APP_DISTRO_BUILD_VERSION_COUNT
+      FIREBASE_APP_DISTRO_BUILD_NAME_COUNT ||= :FIREBASE_APP_DISTRO_BUILD_NAME_COUNT
     end
 
-    class FirebaseAppDistributionGetBuildNumberAction < Action
+    class FirebaseAppDistributionGetBuildNameAction < Action
       extend Auth::FirebaseAppDistributionAuthClient
       extend Helper::FirebaseAppDistributionHelper
 
@@ -21,20 +21,20 @@ module Fastlane
         client.authorization = get_authorization(params[:service_credentials_file], params[:firebase_cli_token], params[:service_credentials_json_data], params[:debug])
 
         app_id = app_id_from_params(params)
-        build_version = params[:build_version]
+        build_name = params[:build_name]
 
-        UI.user_error!("You must provide a build_version") if build_version.nil? || build_version.strip.empty?
+        UI.user_error!("You must provide a build_name") if build_name.nil? || build_name.strip.empty?
 
-        UI.message("⏳ Counting releases with buildVersion=#{build_version} for app #{app_id}...")
+        UI.message("⏳ Counting releases with buildName=#{build_name} for app #{app_id}...")
 
-        count = count_releases_by_build_version(client, app_id, build_version)
+        count = count_releases_by_build_name(client, app_id, build_name)
 
-        UI.success("✅ Found #{count} releases with buildVersion=#{build_version}.")
-        Actions.lane_context[SharedValues::FIREBASE_APP_DISTRO_BUILD_VERSION_COUNT] = count
+        UI.success("✅ Found #{count} releases with buildName=#{build_name}.")
+        Actions.lane_context[SharedValues::FIREBASE_APP_DISTRO_BUILD_NAME_COUNT] = count
         return count
       end
 
-      def self.count_releases_by_build_version(client, app_id, build_version)
+      def self.count_releases_by_build_name(client, app_id, build_name)
         parent = app_name_from_app_id(app_id)
         all_releases = []
         next_page_token = nil
@@ -45,7 +45,7 @@ module Fastlane
           next_page_token = response.next_page_token
         end while next_page_token
 
-        matching_releases = all_releases.select { |release| release.build_version == build_version }
+        matching_releases = all_releases.select { |release| release.build_name == build_name }
         matching_releases.count
       end
 
@@ -54,12 +54,12 @@ module Fastlane
       #####################################################
 
       def self.description
-        "Counts the number of releases in Firebase App Distribution matching a specific buildVersion"
+        "Counts the number of releases in Firebase App Distribution matching a specific buildName"
       end
 
       def self.details
         [
-          "Fetches all releases in App Distribution and counts how many have the specified buildVersion."
+          "Fetches all releases in App Distribution and counts how many have the specified buildName."
         ].join("\n")
       end
 
@@ -96,8 +96,8 @@ module Fastlane
                                        optional: true,
                                        default_value: false,
                                        is_string: false),
-          FastlaneCore::ConfigItem.new(key: :build_version,
-                                       description: "The buildVersion to count releases for",
+          FastlaneCore::ConfigItem.new(key: :build_name,
+                                       description: "The buildName to count releases for",
                                        optional: false,
                                        type: String)
         ]
@@ -105,12 +105,12 @@ module Fastlane
 
       def self.output
         [
-          ['FIREBASE_APP_DISTRO_BUILD_VERSION_COUNT', 'The number of releases matching the specified buildVersion']
+          ['FIREBASE_APP_DISTRO_BUILD_NAME_COUNT', 'The number of releases matching the specified buildName']
         ]
       end
 
       def self.return_value
-        "The number of releases matching the provided buildVersion."
+        "The number of releases matching the provided buildName."
       end
 
       def self.return_type
@@ -129,9 +129,9 @@ module Fastlane
         [
           'count = firebase_app_distribution_get_latest_release(
             app: "<your Firebase app ID>",
-            build_version: "10"
+            build_name: "10"
           )',
-          'puts "Number of releases with buildVersion 10: #{count}"'
+          'puts "Number of releases with buildName 10: #{count}"'
         ]
       end
 
