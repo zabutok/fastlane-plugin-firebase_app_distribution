@@ -11,7 +11,7 @@ module Fastlane
       FIREBASE_APP_DISTRO_BUILD_NAME_COUNT ||= :FIREBASE_APP_DISTRO_BUILD_NAME_COUNT
     end
 
-    class FirebaseAppDistributionGetBuildNameAction < Action
+    class FirebaseAppDistributionGetBuildsCountAction < Action
       extend Auth::FirebaseAppDistributionAuthClient
       extend Helper::FirebaseAppDistributionHelper
 
@@ -127,9 +127,9 @@ module Fastlane
 
       def self.example_code
         [
-          'count = firebase_app_distribution_get_latest_release(
+          'count = firebase_app_distribution_get_builds_count(
             app: "<your Firebase app ID>",
-            build_name: "10"
+            build_name: "Some-Build-Name"
           )',
           'puts "Number of releases with buildName 10: #{count}"'
         ]
