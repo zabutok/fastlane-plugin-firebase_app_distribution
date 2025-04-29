@@ -45,7 +45,7 @@ module Fastlane
           next_page_token = response.next_page_token
         end while next_page_token
 
-        matching_releases = all_releases.select { |release| release.build_name == build_name }
+        matching_releases = all_releases.select { |release| release.display_version == build_name }
         matching_releases.count
       end
 
